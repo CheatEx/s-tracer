@@ -1,18 +1,18 @@
 package org.osll.stracer
 
-import scalala.tensor.{Tensor,Vector};
+import scalala.tensor.Vector;
 
 class Tracer(scene: Scene, options: RenderingOptions) {
   def calcPixel(pixelPos: Tuple2[Int, Int]): Vector = {
     Vector()
   }
   
-  def trace(ray: ExtendedRay): Vector = {
+  def trace(ray: Ray): Vector = {
     val intersection = scene intersectClosest ray
     shade(ray, intersection)
   }
   
-  def shade(ray: ExtendedRay, intersection: Intersection): Vector = {
+  def shade(ray: Ray, intersection: Intersection): Vector = {
     Vector(0, 0, 0)
   }
 }
@@ -21,7 +21,7 @@ abstract class Intersection extends Ordered[Intersection]
 
 case object InfinityIntersection extends Intersection {
   override def compare(that: Intersection): Int  = that match {
-    case ObjectIntersection(_, _, _, thatT) => 1
+    case ObjectIntersection(_, _, _, _) => 1
     case InfinityIntersection => 0
   }
 }

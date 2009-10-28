@@ -13,9 +13,9 @@ class RenderingOptions(
   def height = resolution._2
 }
 
-class STracer(scene: Scene, options: RenderingOptions) {
+object STracer {
   
-  def drawImage(): Array[Array[Vector]] = {
+  def drawImage(scene: Scene, options: RenderingOptions): Array[Array[Vector]] = {
 	val image = new Array[Array[Vector]](options.width, options.height)
 	for (i <- range(0, options.width); j <- range(0, options.height)) {
 	  
