@@ -1,6 +1,9 @@
 package org.osll.stracer
 
+import java.io.InputStream
+
 import scala.List._
+import scala.io.Source
 import scala.collection.mutable.ArrayBuffer
 
 import scalala.Scalala._;
@@ -17,12 +20,14 @@ object STracer {
   
   def drawImage(scene: Scene, options: RenderingOptions): Array[Array[Vector]] = {
 	val image = new Array[Array[Vector]](options.width, options.height)
+	val tracer = new Tracer(scene, options)
 	for (i <- range(0, options.width); j <- range(0, options.height)) {
-	  
+	  image(i)(j) = tracer.calcPixel(i, j)
 	}
+	
 	image
   }
-
+  
   def normalize(image: Array[Array[Vector]]) = {
     var maxValue = 1d;
 	var minValue = 0d;
@@ -40,19 +45,20 @@ object STracer {
   }
   
   def mapImage(func: (Vector)=>Vector, image: Array[Array[Vector]]): Array[Array[Vector]] = {
-    val map = new Array[Array[Vector]](image.length, image(0).length)
-    for (i <- range(0, image.length); j <- range(0, image(0).length)) {
-      map(i).update(j, func(image(i)(j)))
-    }
-    map
+    image map
+      (column => column map
+        (pixel => func(pixel)))
   } 
-  
-  def applyForPixels(func: (Vector)=> Unit, image: Array[Array[Vector]]): Unit = {
-    for (column <- image; pixel <- column) {
-      func(pixel)
-    }
-  }
   
   def applyForComponents(func: (Double)=> Unit, image: Array[Array[Vector]]): Unit =
     applyForPixels(pixel => for (component <- pixel) func(component._2) , image)
+  
+  def applyForPixels(func: (Vector)=> Unit, image: Array[Array[Vector]]): Unit = {
+    for (column <- image; pixel <- column) func(pixel)
+  }
+}
+
+object SceneParser {
+  def parseScene(sceneDescription: InputStream): Scene = 
+    new Scene(null, List(), List(), Vector(0,0,0), Vector(0,0,0))
 }
