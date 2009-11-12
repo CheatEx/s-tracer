@@ -4,7 +4,7 @@ import scalala.tensor.Vector;
 
 class Tracer(scene: Scene, options: RenderingOptions) {
   def calcPixel(pixelPos: Tuple2[Int, Int]): Vector = {
-    Vector()
+    Vector(0, 0, 0)
   }
   
   def trace(ray: Ray): Vector = {
