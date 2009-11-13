@@ -2,17 +2,23 @@ package org.osll.stracer
 
 import scalala.tensor.Vector;
 
-class Tracer(scene: Scene, options: RenderingOptions) {
+class Tracer(scene: Scene, val options: RenderingOptions) {
   def calcPixel(pixelPos: Tuple2[Int, Int]): Vector = {
     Vector(0, 0, 0)
   }
   
-  def trace(ray: Ray): Vector = {
-    val intersection = scene intersectClosest ray
-    shade(ray, intersection)
-  }
+  def trace(ray: Ray): Vector = scene closestIntersection ray match {
+      case intersection: ObjectIntersection => shade(ray, intersection)
+      case InfinityIntersection => scene.background
+    }
   
   def shade(ray: Ray, intersection: Intersection): Vector = {
+    val color = Vector(0,0,0)
+    val rColor = Vector(0,0,0)
+    val tColor = Vector(0,0,0)
+    
+    
+    
     Vector(0, 0, 0)
   }
 }

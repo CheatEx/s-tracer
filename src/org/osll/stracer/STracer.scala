@@ -1,6 +1,7 @@
 package org.osll.stracer
 
-import java.io.InputStream
+import java.io.{InputStream, Reader, InputStreamReader, BufferedReader}
+import java.util.StringTokenizer
 
 import scala.List._
 import scala.io.Source
@@ -46,8 +47,7 @@ object STracer {
   
   def mapImage(func: (Vector)=>Vector, image: Array[Array[Vector]]): Array[Array[Vector]] = {
     image map
-      (column => column map
-        (pixel => func(pixel)))
+      (column => column map func)
   } 
   
   def applyForComponents(func: (Double)=> Unit, image: Array[Array[Vector]]): Unit =
@@ -59,6 +59,67 @@ object STracer {
 }
 
 object SceneParser {
-  def parseScene(sceneDescription: InputStream): Scene = 
-    new Scene(null, List(), List(), Vector(0,0,0), Vector(0,0,0))
+  def parseScene(input: InputStream): Scene = {
+    val reader = new BufferedReader(new InputStreamReader(input))
+    
+    val background = readVector(reader)
+    val ambientLight = readVector(reader)
+    val camera = readCamera(reader)
+    val lights = readLights(reader)
+    val objects = readObjects(reader)
+    
+	new Scene(camera, objects, lights, background, ambientLight)
+  }
+  
+  def readCamera(reader: BufferedReader): Camera = {
+    val pos = readVector(reader)
+    val at = readVector(reader)
+    val up = readVector(reader)
+    
+    new Camera(pos, at, up)
+  }
+  
+  def readLights(reader: BufferedReader): List[Light] = 
+    concat(readObjectGroup(reader, readPointLight),
+           readObjectGroup(reader, readSpotLight))
+  
+  def readObjects(reader: BufferedReader): List[SceneObject] = {    
+    concat(readObjectGroup(reader, readSphere),
+           readObjectGroup(reader, readPolyObject))
+  }
+  
+  def readObjectGroup[GroupType, ObjectType <: GroupType](
+	  reader: BufferedReader, readFunction: BufferedReader => ObjectType): List[GroupType] = {
+    reader readLine
+    val objectsCount = reader readLine() trim() toInt;
+    for (i <- range(0, objectsCount)) yield readFunction(reader)
+  }
+
+  def readPointLight(reader: BufferedReader): PointLight = {
+	  val name = reader readLine() trim()
+	  val position = readVector(reader)
+	  val intensity = readVector(reader)
+	    
+	  new PointLight(position, intensity)
+  }
+  
+  def readSpotLight(reader: BufferedReader): SpotLight = {
+    val name = reader readLine() trim()
+    val position = readVector(reader)
+    val at = readVector(reader)
+    val angle = reader readLine() trim() toDouble
+    val intensity = readVector(reader)
+    
+    new SpotLight(position, at, angle, intensity)
+  }
+  
+  def readSphere(reader: BufferedReader): Sphere = null
+  def readPolyObject(reader: BufferedReader): Polygon = null
+  
+  def readVector(reader: BufferedReader): Vector = {
+    val tokenizer = new StringTokenizer(reader.readLine)
+    Vector(tokenizer.nextToken().toDouble,
+		   tokenizer.nextToken().toDouble,
+    	   tokenizer.nextToken().toDouble)
+  }
 }

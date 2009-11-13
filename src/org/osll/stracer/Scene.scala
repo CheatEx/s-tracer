@@ -10,7 +10,7 @@ class Scene(val camera: Camera,
             lights: List[Light],
             val ambientLight: Vector,
             val background: Vector) {
-  def intersectClosest(ray: Ray): Intersection = min(intersectAll(ray))
+  def closestIntersection(ray: Ray): Intersection = min(intersectAll(ray))
   def intersectAll(ray: Ray): List[Intersection] = List(InfinityIntersection)
 }
 
@@ -18,9 +18,9 @@ class Camera(pos: Vector, at: Vector, upo: Vector) extends DirectedSceneObject(p
 	val up = normalize(upo)
 }
 
-class SceneObject(val pos: Vector)
+abstract class SceneObject(val pos: Vector)
 
-class DirectedSceneObject(pos: Vector, val at: Vector) extends SceneObject(pos)
+abstract class DirectedSceneObject(pos: Vector, val at: Vector) extends SceneObject(pos)
 
 class MaterialObject(pos: Vector, val material: Material) extends SceneObject(pos)
 
@@ -34,10 +34,18 @@ class Polygon(
   val triangles: List[Tuple3[Int, Int, Int]])
 	extends MaterialObject(Vector(), material) //position don't matter since all actual data in vertexes
 
-class Material()
+class Material(val Ka: Vector,
+               val Kd: Vector,
+               val Ks: Vector,
+               val alpha: Double,
+               val rI: Double,
+               val rC: Double,
+               val tC: Double,
+               val lC: Double)
 
-trait Light
+abstract class Light(pos: Vector, val intensity: Vector) extends SceneObject(pos)
 
-class PointLight(pos: Vector) extends SceneObject(pos) with Light
+class PointLight(pos: Vector, intensity: Vector) extends Light(pos, intensity)
 
-class SpotLight(pos: Vector, at: Vector, val angle: Double) extends DirectedSceneObject(pos, at) with Light
+class SpotLight(pos: Vector, val at: Vector, val angle: Double, intensity: Vector)
+  extends Light(pos, intensity)
