@@ -8,4 +8,7 @@ object Utils {
     val length: Double = sqrt(sumsq(vector))
     vector / length value
   }
+  
+  def module(vector: Vector): Double =
+    sqrt(sumsq(vector))
 }
