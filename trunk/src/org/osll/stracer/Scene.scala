@@ -61,7 +61,7 @@ class Sphere(pos: Vector, material: Material, val radius: Double) extends Materi
 	  if (t2 > 0 && t0 <= 1e-6)
 		t0 = t2;
 	  if (t0 < 1e-3)
-		return InfinityIntersection;
+		return InfinityIntersection
 	} else {
 	  t0 = -B / (2 * A);
 	  if (t0 < 1e-3)
@@ -74,13 +74,90 @@ class Sphere(pos: Vector, material: Material, val radius: Double) extends Materi
   }
 }
 
-class Triangle(val first: Vector, val second: Vector, val third: Vector)
+class Triangle(val first: Vector, val second: Vector, val third: Vector) {
+  
+  def intersectWith(ray: Ray): Intersection = {
+		val l = normalize(second - first value)
+		val m = normalize(third - first value)
+//		val n = normalize(l * m value)
+
+//		val nd = n * ray.direction
+		InfinityIntersection
+//		if (nd > -1e-6 && nd < 1e-6) {
+//			return InfinityIntersection
+//		}
+//
+//		double t = -(-n.dot(p0) + n.dot(o)) / nd;
+//		if (t <= 1e-6) {
+//			return InfinityIntersection
+//		}
+//
+//		Vector3d ip = new Vector3d(d);
+//		ip.scaleAdd(t, o); // the intersection point
+//
+//		// project the triangle on one of the primary planes---the plane with
+//		// maximum projection.
+//		double u0 = 0, u1 = 0, u2 = 0, w0 = 0, w1 = 0, w2 = 0;
+//		double nx = Math.abs(n.x);
+//		double ny = Math.abs(n.y);
+//		double nz = Math.abs(n.z);
+//		if (nx >= ny && nx >= nz) {
+//			u0 = ip.y - p0.y;
+//			u1 = l.y;
+//			u2 = m.y;
+//			w0 = ip.z - p0.z;
+//			w1 = l.z;
+//			w2 = m.z;
+//		}
+//		if (ny >= nx && ny >= nz) {
+//			u0 = ip.x - p0.x;
+//			u1 = l.x;
+//			u2 = m.x;
+//			w0 = ip.z - p0.z;
+//			w1 = l.z;
+//			w2 = m.z;
+//		}
+//		if (nz >= nx && nz >= ny) {
+//			u0 = ip.x - p0.x;
+//			u1 = l.x;
+//			u2 = m.x;
+//			w0 = ip.y - p0.y;
+//			w1 = l.y;
+//			w2 = m.y;
+//		}
+//
+//		double t1 = u0 * w2 - w0 * u2;
+//		double t2 = u1 * w0 - w1 * u0;
+//		double t3 = u1 * w2 - w1 * u2;
+//		if (t3 > -1e-6 && t3 < 1e-6) {
+//			// singular system
+//			return null;
+//		}
+//
+//		double alpha = t1 / t3;
+//		double beta = t2 / t3;
+//		if (!(alpha >= 0 && beta >= 0 && alpha + beta <= 1)) {
+//			// intersected point is outside the triangle, ignore it.
+//			return null;
+//		}
+//
+//		// Creating an intersection object
+//		Intersect intersection = new Intersect();
+//		intersection.setT(t);
+//		intersection.setHitPoint(ip);
+//		intersection.setHitNormal(n);
+//		intersection.setHitObject(this.getPolyObj());
+//
+//		return intersection;
+  }
+}
 
 class Polygon(
   material: Material,
   val vertexes: List[Vector],
   val triangles: List[Tuple3[Int, Int, Int]])
 	extends MaterialObject(Vector(), material) { //position don't matter since all actual data in vertexes
+	  
    override def intersectionWith(ray: Ray): Intersection = InfinityIntersection
 }
 
