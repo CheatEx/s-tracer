@@ -2,8 +2,8 @@ package org.osll.stracer
 
 import scala.Iterable._
 
-import scalala.Scalala._;
-import scalala.tensor.Vector;
+import scalala.Scalala._
+import scalala.tensor.Vector
 
 import org.osll.stracer.Utils._
 
@@ -82,7 +82,6 @@ class Triangle(val first: Vector, val second: Vector, val third: Vector) {
 //		val n = normalize(l * m value)
 
 //		val nd = n * ray.direction
-		InfinityIntersection
 //		if (nd > -1e-6 && nd < 1e-6) {
 //			return InfinityIntersection
 //		}
@@ -149,6 +148,7 @@ class Triangle(val first: Vector, val second: Vector, val third: Vector) {
 //		intersection.setHitObject(this.getPolyObj());
 //
 //		return intersection;
+		InfinityIntersection
   }
 }
 

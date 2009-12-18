@@ -20,13 +20,13 @@ class RenderingOptions(
 object STracer {
   
   def drawImage(scene: Scene, options: RenderingOptions): Array[Array[Vector]] = {
-	val image = new Array[Array[Vector]](options.width, options.height)
-	val tracer = new Tracer(scene, options)
-	for (i <- range(0, options.width); j <- range(0, options.height)) {
-	  image(i)(j) = tracer.calcPixel(i, j)
-	}
-	
-	image
+		val image = new Array[Array[Vector]](options.width, options.height)
+		val tracer = new Tracer(scene, options)
+		for (i <- range(0, options.width); j <- range(0, options.height)) {
+		  image(i)(j) = tracer.calcPixel(i, j)
+		}
+		
+		image
   }
   
   def normalize(image: Array[Array[Vector]]) = {
@@ -68,7 +68,7 @@ object SceneParser {
     val lights = readLights(reader)
     val objects = readObjects(reader)
     
-	new Scene(camera, objects, lights, background, ambientLight)
+		new Scene(camera, objects, lights, background, ambientLight)
   }
   
   def readCamera(reader: BufferedReader): Camera = {
@@ -80,16 +80,13 @@ object SceneParser {
   }
   
   def readLights(reader: BufferedReader): List[Light] = 
-    concat(readObjectGroup(reader, readPointLight),
-           readObjectGroup(reader, readSpotLight))
+    readObjectGroup(reader, readPointLight):::readObjectGroup(reader, readSpotLight)
   
-  def readObjects(reader: BufferedReader): List[SceneObject] = {    
-    concat(readObjectGroup(reader, readSphere),
-           readObjectGroup(reader, readPolyObject))
-  }
+  def readObjects(reader: BufferedReader): List[MaterialObject] =
+    readObjectGroup(reader, readSphere):::readObjectGroup(reader, readPolyObject)
   
-  def readObjectGroup[GroupType, ObjectType <: GroupType](
-	  reader: BufferedReader, readFunction: BufferedReader => ObjectType): List[GroupType] = {
+  def readObjectGroup[ObjectType](reader: BufferedReader,
+                                  readFunction: BufferedReader => ObjectType): List[ObjectType] = {
     reader readLine
     val objectsCount = reader readLine() trim() toInt;
     for (i <- range(0, objectsCount)) yield readFunction(reader)
@@ -113,13 +110,37 @@ object SceneParser {
     new SpotLight(position, at, angle, intensity)
   }
   
-  def readSphere(reader: BufferedReader): Sphere = null
-  def readPolyObject(reader: BufferedReader): Polygon = null
+  def readSphere(reader: BufferedReader): Sphere = {
+    val name = reader readLine() trim()
+    val position = readVector(reader)
+    val radius = reader readLine() trim() toDouble
+    val material = readMaterial(reader)
+    
+    new Sphere(position, material, radius)
+  }
+  
+  def readPolyObject(reader: BufferedReader): Polygon = {
+    val material = readMaterial(reader)
+    val vertexes = readObjectGroup(reader, readVector)
+    val triangles = readObjectGroup(reader, readTriangle)
+    new Polygon(material, vertexes, triangles)
+  }
+  
+  def readMaterial(reader: BufferedReader): Material = {
+    null
+  }
+  
+  def readTriangle(reader: BufferedReader): Tuple3[Int, Int, Int] = {
+    val tokenizer = new StringTokenizer(reader.readLine)
+    Tuple3(tokenizer.nextToken().toInt,
+           tokenizer.nextToken().toInt,
+           tokenizer.nextToken().toInt)
+  }
   
   def readVector(reader: BufferedReader): Vector = {
     val tokenizer = new StringTokenizer(reader.readLine)
     Vector(tokenizer.nextToken().toDouble,
-		   tokenizer.nextToken().toDouble,
-    	   tokenizer.nextToken().toDouble)
+           tokenizer.nextToken().toDouble,
+           tokenizer.nextToken().toDouble)
   }
 }
