@@ -1,34 +1,40 @@
 package org.osll.stracer
 
-import scalala.tensor.Vector;
-
 import org.osll.stracer.Utils._
 
 class Tracer(scene: Scene, val options: RenderingOptions) {
   def calcPixel(pixelPos: Tuple2[Int, Int]): Vector = {
-    Vector(0, 0, 0)
+    trace(new Ray(CoordinatesOrigin,
+    			  getPixelCoordinates(pixelPos) - CoordinatesOrigin))
   }
   
-  def trace(ray: Ray): Vector = scene closestIntersection ray match {
-      case intersection: ObjectIntersection => shade(ray, intersection)
-      case InfinityIntersection => scene.background
-    }
+  /**
+   * TODO calc absolute pixel coordinates
+   */
+  def getPixelCoordinates(pixelPos: Tuple2[Int, Int]): Vector =
+    CoordinatesOrigin
   
+  def trace(ray: Ray): Vector = scene closestIntersectionWith ray match {
+    case intersection: ObjectIntersection => shade(ray, intersection)
+    case InfinityIntersection => scene.background
+  }
+  
+  /**
+   * TODO implement shade algorithm
+   */
   def shade(ray: Ray, intersection: ObjectIntersection): Vector = {
     for (light <- scene.lights) {
       var intensity = light.intensity
-      val lightDirection = Vector(light.pos(0) - intersection.hitPoint(0),
-      							  light.pos(1) - intersection.hitPoint(1),
-      							  light.pos(2) - intersection.hitPoint(2))
-      val lightDistance = module(lightDirection)
+      val lightDirection = light.pos - intersection.hitPoint
+      val lightDistance = lightDirection.length
       
       null
     }
     
-    Vector(0, 0, 0)
+    new Vector(0, 0, 0)
   }
   
-  def calcLightDirection(light: Light, hitPoint: Vector): Vector = Vector()
+  def calcLightDirection(light: Light, hitPoint: Vector): Vector = new Vector(0,0,0)
 }
 
 abstract class Intersection extends Ordered[Intersection]

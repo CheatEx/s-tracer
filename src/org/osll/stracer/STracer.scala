@@ -7,9 +7,6 @@ import scala.List._
 import scala.io.Source
 import scala.collection.mutable.ArrayBuffer
 
-import scalala.Scalala._;
-import scalala.tensor.{Tensor,Vector};
-
 class RenderingOptions(
     resolution: Tuple2[Int, Int], depth: Int, minWeight: Double, lightAttenuation: Boolean) {
 	
@@ -31,7 +28,7 @@ object STracer {
   
   def normalize(image: Array[Array[Vector]]) = {
     var maxValue = 1d;
-	var minValue = 0d;
+		var minValue = 0d;
     applyForComponents(
       component => {
         if (component > maxValue) maxValue = component
@@ -41,7 +38,7 @@ object STracer {
     val normalisation: Double = - minValue + maxValue
     mapImage(
       pixel => {
-        (pixel - minValue) / normalisation value
+        (pixel - minValue) / normalisation
       }, image)
   }
   
@@ -51,11 +48,10 @@ object STracer {
   } 
   
   def applyForComponents(func: (Double)=> Unit, image: Array[Array[Vector]]): Unit =
-    applyForPixels(pixel => for (component <- pixel) func(component._2) , image)
-  
-  def applyForPixels(func: (Vector)=> Unit, image: Array[Array[Vector]]): Unit = {
-    for (column <- image; pixel <- column) func(pixel)
-  }
+    for (column <- image;
+         pixel <- column;
+    		 component <- pixel)
+    	func(component)
 }
 
 object SceneParser {
@@ -68,15 +64,15 @@ object SceneParser {
     val lights = readLights(reader)
     val objects = readObjects(reader)
     
-		new Scene(camera, objects, lights, background, ambientLight)
+	new Scene(camera, objects, lights, background, ambientLight)
   }
   
   def readCamera(reader: BufferedReader): Camera = {
-    val pos = readVector(reader)
     val at = readVector(reader)
     val up = readVector(reader)
+    val viewport = reader readLine() trim() toDouble
     
-    new Camera(pos, at, up)
+    new Camera(at, up, viewport)
   }
   
   def readLights(reader: BufferedReader): List[Light] = 
@@ -139,7 +135,7 @@ object SceneParser {
   
   def readVector(reader: BufferedReader): Vector = {
     val tokenizer = new StringTokenizer(reader.readLine)
-    Vector(tokenizer.nextToken().toDouble,
+    new Vector(tokenizer.nextToken().toDouble,
            tokenizer.nextToken().toDouble,
            tokenizer.nextToken().toDouble)
   }
