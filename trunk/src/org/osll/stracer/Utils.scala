@@ -1,14 +1,28 @@
 package org.osll.stracer
 
-import scalala.Scalala._;
-import scalala.tensor.Vector;
+import scala.Math._;
+
+class Vector(val x: Double, val y: Double, val z: Double) extends Tuple3(x, y, z) {
+  
+  def +(that: Vector): Vector = new Vector(x+that.x, y+that.y, z+that.z)
+  def -(that: Vector): Vector = new Vector(x-that.x, y-that.y, z-that.z)
+  
+  def +(v: Double): Vector = new Vector(x+v, y+v, z+v)
+  def -(v: Double): Vector = new Vector(x-v, y-v, z-v)
+  def *(v: Double): Vector = new Vector(x*v, y*v, z*v)
+  def /(v: Double): Vector = new Vector(x/v, y/v, z/v)
+  
+  def sumsq: Double = x*x + y*y + z*z
+  
+  def length = sqrt(sumsq)
+  
+  def normalize: Vector = this / length
+  
+  def map(f: Double => Double): Vector = new Vector(f(x), f(y), f(z))
+  
+  def foreach(f: Double => Unit): Unit = {f(x);f(y);f(z)}
+}
 
 object Utils {
-  def normalize(vector: Vector): Vector = {
-    val length: Double = sqrt(sumsq(vector))
-    vector / length value
-  }
-  
-  def module(vector: Vector): Double =
-    sqrt(sumsq(vector))
+  val CoordinatesOrigin = new Vector(0,0,0)
 }

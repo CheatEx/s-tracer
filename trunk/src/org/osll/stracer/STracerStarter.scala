@@ -1,7 +1,5 @@
 package org.osll.stracer
 
-import scalala.tensor.{Tensor,Vector};
-
 import java.awt.{Color, Image, Graphics}
 import java.awt.BorderLayout
 import java.awt.image.BufferedImage
@@ -52,9 +50,9 @@ object Starter {
   }
   
   def toBufferPixel(color: Vector): Int = {
-    val red = toByteComponent(color(0))
-    val green = toByteComponent(color(1))
-    val blue = toByteComponent(color(2))
+    val red = toByteComponent(color.x)
+    val green = toByteComponent(color.y)
+    val blue = toByteComponent(color.z)
     (red << 16) | (green << 8) | blue
   }
   
