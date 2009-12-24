@@ -1,6 +1,7 @@
 package org.osll.stracer
 
 import scala.Iterable._
+import scala.Math._
 
 import org.osll.stracer.Utils._
 
@@ -180,5 +181,7 @@ abstract class Light(pos: Vector, val intensity: Vector) extends SceneObject(pos
 
 class PointLight(pos: Vector, intensity: Vector) extends Light(pos, intensity)
 
-class SpotLight(pos: Vector, val at: Vector, val angle: Double, intensity: Vector)
-  extends Light(pos, intensity)
+class SpotLight(pos: Vector, val at: Vector, degreesAngle: Double, intensity: Vector)
+  extends Light(pos, intensity) {
+    val angle = degreesAngle * Pi / 180
+  }

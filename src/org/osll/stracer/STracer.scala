@@ -8,7 +8,7 @@ import scala.io.Source
 import scala.collection.mutable.ArrayBuffer
 
 class RenderingOptions(
-    resolution: Tuple2[Int, Int], depth: Int, minWeight: Double, lightAttenuation: Boolean) {
+    resolution: Tuple2[Int, Int], depth: Int, minWeight: Double, val lightAttenuation: Boolean) {
 	
   def width = resolution._1
   def height = resolution._2

@@ -14,9 +14,9 @@ object Starter {
     }
     val imageWidth = args(0).toInt
     val imageHeight = args(1).toInt
-	val depth = args(2).toInt
-	val minWeight = args(3).toDouble
-	val	lightAttenuation = args(4).toBoolean;
+		val depth = args(2).toInt
+		val minWeight = args(3).toDouble
+		val	lightAttenuation = args(4).toBoolean
     val descriptionFileName = args(5)
     
     val inputStream = new FileInputStream(descriptionFileName)
@@ -32,7 +32,7 @@ object Starter {
   }
   
   def toAwtImage(image: Array[Array[Vector]]): Image = {
-    val width = image.size
+    val width = image size
     val height = image(0).size
     val pixels: Array[Int] = new Array(width*height)
     val awtImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
@@ -60,15 +60,14 @@ object Starter {
 }
 
 class STracerFrame extends JFrame {  
-  
-  def show(image: Image, width: Int, height: Int) = {
-	getContentPane().add(
-	  new ImagePanel(image, width, height),
-	  BorderLayout.CENTER)
-	setSize(width + 6, height + 30)
-	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-	setResizable(false)
-	setVisible(true)
+	def show(image: Image, width: Int, height: Int) = {
+		getContentPane().add(
+		  new ImagePanel(image, width, height),
+		  BorderLayout.CENTER)
+		setSize(width + 6, height + 30)
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+		setResizable(false)
+		setVisible(true)
   }
 }
 
