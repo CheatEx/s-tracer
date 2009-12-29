@@ -65,10 +65,11 @@ class Tracer(scene: Scene, val options: RenderingOptions) {
         nh = pow(nh, intersection.obj.material.alpha);
         color += intensity * intersection.obj.material.Ks * nh * shadowAttenuation
       }
-      color *= intersection.obj.material.lC
-      color += trace(computeReflectedRay)*intersection.obj.material.rC
-      color += trace(computeReflectedRay)*intersection.obj.material.tC
     }
+    
+    color *= intersection.obj.material.lC
+    color += trace(computeReflectedRay)*intersection.obj.material.rC
+    color += trace(computeTransmittedRay)*intersection.obj.material.tC
 
     color
   }
@@ -77,7 +78,15 @@ class Tracer(scene: Scene, val options: RenderingOptions) {
   def computeTransmittedRay: ExtendedRay = null
   
   def computeShadowAttenuation(shadowRay: Ray, lightDistance: Double): Double = {
-    0
+    var shadowAttenuation = 1.0
+    for (intersection <- scene.allIntersectionsWith(shadowRay)) intersection match {
+        case ObjectIntersection(_, _, obj, t) =>
+          if ((shadowRay.direction * t + shadowRay.origin length) < lightDistance) {
+        	  shadowAttenuation *= obj.material.tC
+          }
+        case InfinityIntersection => {}
+      }
+    shadowAttenuation
   }
   
   def ambientColor(intersection: ObjectIntersection): Vector =
@@ -108,7 +117,7 @@ class Screen(camera: Camera, screenDistance: Double,
   val ny: Vector = CoordinatesOrigin
 }
 
-abstract class Intersection extends Ordered[Intersection]
+abstract sealed class Intersection extends Ordered[Intersection]
 
 case object InfinityIntersection extends Intersection {
   override def compare(that: Intersection): Int  = that match {

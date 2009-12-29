@@ -10,9 +10,9 @@ class Scene(val camera: Camera,
             val lights: List[Light],
             val ambientLight: Vector,
             val background: Vector) {
-  def closestIntersectionWith(ray: Ray): Intersection = Iterable.min(intersectAll(ray))
+  def closestIntersectionWith(ray: Ray): Intersection = Iterable.min(allIntersectionsWith(ray))
   
-  def intersectAll(ray: Ray): List[Intersection] =
+  def allIntersectionsWith(ray: Ray): List[Intersection] =
     for (sceneObject <- objects) yield sceneObject intersectionWith ray
 }
 
