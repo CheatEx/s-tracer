@@ -28,7 +28,7 @@ object STracer {
   
   def normalize(image: Array[Array[Vector]]) = {
     var maxValue = 1d;
-		var minValue = 0d;
+	var minValue = 0d;
     applyForComponents(
       component => {
         if (component > maxValue) maxValue = component
@@ -50,8 +50,8 @@ object STracer {
   def applyForComponents(func: (Double)=> Unit, image: Array[Array[Vector]]): Unit =
     for (column <- image;
          pixel <- column;
-    		 component <- pixel)
-    	func(component)
+    	 component <- pixel)
+      func(component)
 }
 
 object SceneParser {
