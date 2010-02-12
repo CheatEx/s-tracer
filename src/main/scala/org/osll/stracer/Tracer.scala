@@ -78,15 +78,17 @@ class Tracer(scene: Scene, val options: RenderingOptions) {
   def computeTransmittedRay: ExtendedRay = null
   
   def computeShadowAttenuation(shadowRay: Ray, lightDistance: Double): Double = {
-    var shadowAttenuation = 1.0
-    for (intersection <- scene.allIntersectionsWith(shadowRay)) intersection match {
-        case ObjectIntersection(_, _, obj, t) =>
-          if ((shadowRay.direction * t + shadowRay.origin length) < lightDistance) {
-        	  shadowAttenuation *= obj.material.tC
-          }
-        case InfinityIntersection => {}
-      }
-    shadowAttenuation
+    
+    def getAttenuationCorrection(intersection: Intersection) = intersection match {
+      case ObjectIntersection(_, _, obj, t) =>
+        if ((shadowRay.direction * t + shadowRay.origin length) < lightDistance) obj.material.tC
+        else 1.0
+      case InfinityIntersection => 1.0
+    }
+    
+    val attenuationCorrections = scene.allIntersectionsWith(shadowRay) map getAttenuationCorrection
+    //1.0 default attenuation and then we multily it with all corrections
+    attenuationCorrections.foldLeft(1.0)(_ * _)
   }
   
   def ambientColor(intersection: ObjectIntersection): Vector =
@@ -94,7 +96,7 @@ class Tracer(scene: Scene, val options: RenderingOptions) {
 }
 
 class Screen(camera: Camera, screenDistance: Double,
-             verticalResolution: Double, horisontalResolution: Double) {
+             verticalResolution: Int, horisontalResolution: Int) {
 
   def getPixelCoordinates(pixelPos: Tuple2[Int, Int]): Vector = 
     topBottom + screen2Absolute(d*pixelPos._1, d*pixelPos._2)
